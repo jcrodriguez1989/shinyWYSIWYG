@@ -64,4 +64,5 @@ loadUi <- function(input, output, session, env) {
   updateGlobalVarsInput(input, output, session, globalVars=env$globalVars);
   updateNewEvtInput(input, output, session, env$events);
   updateTextAreaInput(session, inputId='globalInput', value=env$global);
+  updateTabsetPanel(session, inputId='maintabset', selected='UI'); # move to UI panel
 }

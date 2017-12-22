@@ -13,9 +13,11 @@
 #'shinyWYSIWYG();
 #'}
 #'
-#'@import ggplot2
 #'@import shiny
-#'@import shinyjs
+#'
+#'@importFrom ggplot2 ggplot geom_rect geom_text aes scale_y_reverse scale_x_continuous coord_fixed
+#'@importFrom ggplot2 theme element_blank
+#'@importFrom shinyjs disabled hidden useShinyjs
 #'@export shinyWYSIWYG
 #'
 shinyWYSIWYG <- function() {

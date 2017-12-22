@@ -15,7 +15,7 @@ shinyUI(
     }")),
     useShinyjs(),
     h1('shinyWYSIWYG'),
-    tabsetPanel(type='tabs',
+    tabsetPanel(id='maintabset', type='tabs',
       tabPanel('UI', wellPanel(
         uiCreator()
       )),

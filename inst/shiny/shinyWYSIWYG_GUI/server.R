@@ -132,4 +132,18 @@ shinyServer(function(input, output, session) {
     loadUi(input, output, session, env);
   })
 
+  observeEvent(input$loadExamplebtn, {
+    appDir <- system.file('shiny', 'data', package='shinyWYSIWYG');
+    if (appDir == '') {
+      stop('Could not find GUI directory. Try re-installing `shinyWYSIWYG`.',
+           call.=FALSE);
+    }
+    env <- get(load(paste(appDir, '01_hello.RData', sep='/')));
+    canvasObjects <<- env$canvasObjects;
+    validObjects <<- env$validObjects;
+    globalVars <<- env$globalVars;
+    events <<- env$events;
+    loadUi(input, output, session, env);
+  })
+
 })
