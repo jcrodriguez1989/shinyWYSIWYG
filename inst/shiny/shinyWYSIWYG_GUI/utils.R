@@ -53,7 +53,7 @@ getShinyRenderFnctns <- function() {
   shinyNspace <- as.list(loadNamespace('shiny'))[getNamespaceExports('shiny')];
   shinyFunctions <- shinyNspace[unlist(lapply(shinyNspace, class)) ==
                                   'function'];
-  names(shinyFunctions)[startsWith(names(shinyFunctions), 'render')];
+  names(shinyFunctions)[grepl('^render', names(shinyFunctions))];
 };
 
 # Initializes the Ui with data loaded from an RData

@@ -11,7 +11,7 @@ Description: shinyWYSIWYG its basically a shiny app, not an R package.
 License: GPL (>= 2)
 Imports:
     ggplot2,
-    shiny,
+    shiny (>= 1.0.1),
     shinyjs
 Encoding: UTF-8
 LazyData: true

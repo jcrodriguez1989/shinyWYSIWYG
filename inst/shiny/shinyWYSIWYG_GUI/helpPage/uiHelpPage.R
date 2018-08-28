@@ -22,7 +22,7 @@ helpPage <- function() {
         'Use ', tags$strong('With'), ' inputs as variables into your ', tags$strong('What'), ' code (with their object id as variable name).',
         br(),
         'Fill the ', tags$strong('What'), ' field with the code that should be executed.',
-        'Use global variables if wanted, and modify their value with ', tags$i('<<-'), ' operator.',
+        'Use global variables if wanted.',
         br(),
         'Use ', tags$i('Output'), ' objects to render data.',
         'You should specify the ', tags$i('Rendering'), ' method corresponding to that type of data.',

@@ -88,10 +88,11 @@ createCanvasLayout <- function(input, objList) {
   canvasWide <- do.call(rbind, lapply(names(objList), function(actObjsName) {
     # actObjsName <- names(objList)[[1]];
     actObjs <- objList[[actObjsName]];
-    do.call(rbind, lapply(actObjs, function(actObj) {
+    actRes <- do.call(rbind, lapply(actObjs, function(actObj) {
       # actObj <- actObjs[[1]];
       unlist(actObj);
     }))
+    actRes[, c('id', 'type', 'x', 'y', 'width', 'height')];
   }))
   # todo: better alternative for this! :@
   canvasWide <- data.frame(canvasWide);
