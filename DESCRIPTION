@@ -4,7 +4,7 @@ Title: Shiny What You See Is What You Get (WYSIWYG) editor
 Version: 0.1.0
 Author: Juan Cruz Rodriguez
 Maintainer: Juan Cruz Rodriguez <jcrodriguez@unc.edu.ar>
-Description: shinyWYSIWYG its basically a shiny app, not an R package.
+Description: shinyWYSIWYG is a shiny app.
     Create Shiny user interfaces easily with this editor.
     It helps creating the UI and the server.
     Package mainly created to help learning how to develop Shiny apps.
