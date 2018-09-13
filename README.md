@@ -1,27 +1,44 @@
-shinyWYSIWYG
-===================
+ShinyWYSIWYG
+================
 
 Shiny What You See Is What You Get (WYSIWYG) editor
--------------
-**shinyWYSIWYG** is a shiny app, not an R package.
+---------------------------------------------------
 
-Create Shiny user interfaces easily with this editor.
+Features
+--------
 
-It helps creating the UI and the server.
+-   Create [Shiny](http://shiny.rstudio.com/) apps easily with this editor.
 
-Package mainly created to help learning how to develop [Shiny apps](http://shiny.rstudio.com/).
+-   Helps to create the UI and the server.
 
-[Example video](https://youtu.be/mfEwWn2mxpU)
+-   Helps to learn how to develop Shiny apps.
 
-#### Installation and usage:
-Requires [devtools](https://cran.r-project.org/package=devtools)
-```R
-> library('devtools');
-> install_github('jcrodriguez1989/shinyWYSIWYG');
-> 
-> library('shinyWYSIWYG');
-> shinyWYSIWYG();
+Installation
+------------
+
+ShinyWYSIWYG is currently only available as a GitHub package. To install it run the following from an R console:
+
+``` installing
+if (!require("devtools"))
+  install.packages("devtools")
+devtools::install_github("jcrodriguez1989/shinyWYSIWYG")
 ```
 
-Or just visit the example application at 
-https://jcrodriguez.shinyapps.io/shinyWYSIWYG/ 
+Usage
+-----
+
+From an R console type:
+
+``` usage
+library("shinyWYSIWYG");
+
+# will open the app in a web browser
+shinyWYSIWYG();
+```
+
+Or visit the [example app](https://jcrodriguez.shinyapps.io/shinyWYSIWYG/) at shinyapps.io
+
+Example
+-------
+
+Watch the [example video](https://youtu.be/mfEwWn2mxpU) of how to create a Shiny app with ShinyWYSIWYG.
