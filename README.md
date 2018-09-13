@@ -18,7 +18,7 @@ Installation
 
 ShinyWYSIWYG is currently only available as a GitHub package. To install it run the following from an R console:
 
-``` installing
+``` r
 if (!require("devtools"))
   install.packages("devtools")
 devtools::install_github("jcrodriguez1989/shinyWYSIWYG")
@@ -29,7 +29,7 @@ Usage
 
 From an R console type:
 
-``` usage
+``` r
 library("shinyWYSIWYG");
 
 # will open the app in a web browser
