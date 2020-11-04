@@ -43,6 +43,9 @@ createUiObj <- function(actObj, actArgs, input) {
     } else if (actArgClass == 'NULL') {
       actVal <- ifelse (!is.null(oldVal), oldVal, 'NULL');
       res <- textInput(inputId=actFullId, label=actArg, value=actVal);
+    } else if (is.na(actArgs[[actArg]])) {
+      actVal <- ifelse (!is.null(oldVal), oldVal, 'NA');
+      res <- textInput(inputId=actFullId, label=actArg, value=actVal);
     } else if (actArgClass == 'logical') {
       actVal <- ifelse (!is.null(oldVal), oldVal, actArgs[[actArg]]);
       res <- checkboxInput(inputId=actFullId, label=actArg, value=actVal);
@@ -52,9 +55,6 @@ createUiObj <- function(actObj, actArgs, input) {
     } else if (actArgClass == 'if') {
       res <- c();
       # todo: handle this type
-    } else if (is.na(actArgs[[actArg]])) {
-      actVal <- ifelse (!is.null(oldVal), oldVal, 'NA');
-      res <- textInput(inputId=actFullId, label=actArg, value=actVal);
     } else {
       warning(paste0('New shiny arg class found ', actArgClass));
       res <- c();
