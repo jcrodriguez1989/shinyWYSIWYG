@@ -2,8 +2,8 @@
 % Please edit documentation in R/shiny-shinyWYSIWYG.R
 \docType{methods}
 \name{shinyWYSIWYG-GUI}
-\alias{shinyWYSIWYG}
 \alias{shinyWYSIWYG-GUI}
+\alias{shinyWYSIWYG}
 \title{shinyWYSIWYG GUI}
 \usage{
 shinyWYSIWYG()
@@ -19,4 +19,3 @@ shinyWYSIWYG();
 }
 
 }
-
