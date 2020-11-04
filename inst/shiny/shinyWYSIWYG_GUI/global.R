@@ -1,3 +1,3 @@
-require('ggplot2');
-require('shinyjs');
-require('shinyWYSIWYG');
+require("ggplot2")
+require("shinyjs")
+require("shinyWYSIWYG")

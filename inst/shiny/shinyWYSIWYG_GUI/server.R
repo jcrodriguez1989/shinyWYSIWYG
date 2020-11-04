@@ -1,56 +1,53 @@
-library('shiny');
-
-source('utils.R');
-
-source('uiCreator/serverObjCreator.R');
-source('uiCreator/serverCanvas.R');
-source('resultGenerator/serverResultGenerator.R');
-
+library("shiny")
+source("utils.R")
+source("uiCreator/serverObjCreator.R")
+source("uiCreator/serverCanvas.R")
+source("resultGenerator/serverResultGenerator.R")
 shinyServer(function(input, output, session) {
   canvasObjects <- reactiveVal(list(
-    objList=list(),
-    canvasLayout=list()
-  ));
+    objList = list(),
+    canvasLayout = list()
+  ))
 
   # it is created when shinyWYSIWYG starts, and never modified.
   # to avoid calling the function several times.
   # it is a list with 'Inputs' = shiny valid inputs
   # and 'Outputs' = shiny valid outputs.
-  validObjects <- reactiveVal(initializeUi(input, output, session)); # returns the list of posible objects to create
+  validObjects <- reactiveVal(initializeUi(input, output, session)) # returns the list of posible objects to create
 
-  globalVars <- reactiveVal(list());
-  events <- reactiveVal(list());
+  globalVars <- reactiveVal(list())
+  events <- reactiveVal(list())
 
   ################### uiCreator
 
   ############### objCreator
 
   observeEvent(input$objOkbtn, {
-    canvasObjects(createObj(input, output, session, canvasObjects(), validObjects()));
+    canvasObjects(createObj(input, output, session, canvasObjects(), validObjects()))
   })
 
   observeEvent(input$objDelbtn, {
-    canvasObjects(delObj(input, output, session, canvasObjects(), validObjects()));
+    canvasObjects(delObj(input, output, session, canvasObjects(), validObjects()))
   })
 
-  updateObjId <- reactiveVal(!FALSE); # avoids updating objId when not desired
+  updateObjId <- reactiveVal(!FALSE) # avoids updating objId when not desired
   observeEvent(input$selectedObject, {
     if (updateObjId()) {
-      objCreatorSelected(input, output, session, canvasObjects());
+      objCreatorSelected(input, output, session, canvasObjects())
     } else {
-      updateObjId(!FALSE);
+      updateObjId(!FALSE)
     }
   })
 
   ############### canvas
 
   observeEvent(input$canvasbrush, {
-    canvasbrushing(input, output, session);
+    canvasbrushing(input, output, session)
   })
 
   observeEvent(input$canvasDblclick, {
-    updateObjId(FALSE);
-    canvasDblclick(input, output, session, canvasObjects());
+    updateObjId(FALSE)
+    canvasDblclick(input, output, session, canvasObjects())
   })
 
   ################### serverCreator
@@ -58,92 +55,93 @@ shinyServer(function(input, output, session) {
   ########### global vars
 
   observeEvent(input$globalVarCreatebtn, {
-    createGlobalVarModal(input, output, session);
+    createGlobalVarModal(input, output, session)
   })
 
   observeEvent(input$newGlobalVarCreated, {
-    globalVars(createGlobalVar(input, output, session, globalVars()));
+    globalVars(createGlobalVar(input, output, session, globalVars()))
   })
 
   observeEvent(input$globalVarDelbtn, {
-    globalVars(delGlobalVar(input, output, session, globalVars()));
+    globalVars(delGlobalVar(input, output, session, globalVars()))
   })
 
   ########### events
 
   observeEvent(input$newEventCreatebtn, {
-    events(createEvent(input, output, session, events()));
+    events(createEvent(input, output, session, events()))
   })
 
   observeEvent(input$newEventDelbtn, {
-    events(delEvent(input, output, session, events()));
+    events(delEvent(input, output, session, events()))
   })
 
   observeEvent(input$events, {
-    eventSelChange(input, output, session, events());
+    eventSelChange(input, output, session, events())
   })
 
   ################### resultGenerator
 
   observeEvent(input$resultGeneratebtn, {
-    getObjParams(input, output, session, canvasObjects());
+    getObjParams(input, output, session, canvasObjects())
   })
 
   observeEvent(input$filledObjArgsbtn, {
-    canvasObjects(saveObjParams(input, output, session, canvasObjects()));
-    generateResult(input, output, session, canvasObjects(), globalVars(), events());
+    canvasObjects(saveObjParams(input, output, session, canvasObjects()))
+    generateResult(input, output, session, canvasObjects(), globalVars(), events())
   })
 
   ################### save / load creator data
 
   output$creatorSavebtn <- downloadHandler(
     filename = function() {
-      paste0('shinyWYSIWYG-', Sys.Date(), '.RData')
+      paste0("shinyWYSIWYG-", Sys.Date(), ".RData")
     },
     content = function(con) {
       shinyWYSIWYG_data <- list(
-        canvasObjects=canvasObjects(),
-        validObjects=validObjects(),
-        globalVars=globalVars(),
-        events=events(),
-        global=input$globalInput
-      );
-      save(shinyWYSIWYG_data, file=con);
+        canvasObjects = canvasObjects(),
+        validObjects = validObjects(),
+        globalVars = globalVars(),
+        events = events(),
+        global = input$globalInput
+      )
+      save(shinyWYSIWYG_data, file = con)
     }
   )
 
   observeEvent(input$creatorLoadbtn, {
-    inFile <- input$creatorLoadbtn;
-    env <- get(load(inFile$datapath));
+    inFile <- input$creatorLoadbtn
+    env <- get(load(inFile$datapath))
     error <- !all(c(
       "canvasObjects",
       "validObjects",
       "globalVars",
       "events",
-      "global") %in% names(env));
+      "global"
+    ) %in% names(env))
     if (error) {
-      showNotification('Incorrect input file', type='error');
-      return();
+      showNotification("Incorrect input file", type = "error")
+      return()
     }
-    canvasObjects(env$canvasObjects);
-    validObjects(env$validObjects);
-    globalVars(env$globalVars);
-    events(env$events);
-    loadUi(input, output, session, env);
+    canvasObjects(env$canvasObjects)
+    validObjects(env$validObjects)
+    globalVars(env$globalVars)
+    events(env$events)
+    loadUi(input, output, session, env)
   })
 
   observeEvent(input$loadExamplebtn, {
-    appDir <- system.file('shiny', 'data', package='shinyWYSIWYG');
-    if (appDir == '') {
-      stop('Could not find GUI directory. Try re-installing `shinyWYSIWYG`.',
-           call.=FALSE);
+    appDir <- system.file("shiny", "data", package = "shinyWYSIWYG")
+    if (appDir == "") {
+      stop("Could not find GUI directory. Try re-installing `shinyWYSIWYG`.",
+        call. = FALSE
+      )
     }
-    env <- get(load(paste(appDir, '01_hello.RData', sep='/')));
-    canvasObjects(env$canvasObjects);
-    validObjects(env$validObjects);
-    globalVars(env$globalVars);
-    events(env$events);
-    loadUi(input, output, session, env);
+    env <- get(load(paste(appDir, "01_hello.RData", sep = "/")))
+    canvasObjects(env$canvasObjects)
+    validObjects(env$validObjects)
+    globalVars(env$globalVars)
+    events(env$events)
+    loadUi(input, output, session, env)
   })
-
 })

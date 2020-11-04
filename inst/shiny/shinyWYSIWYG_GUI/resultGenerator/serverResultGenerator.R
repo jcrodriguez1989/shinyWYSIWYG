@@ -1,113 +1,118 @@
 # Creates the modal to fill every ui object additional parameters.
 # Called when resultGeneratebtn is clicked.
 getObjParams <- function(input, output, session, canvasObjects) {
-  shinyNspace <- as.list(loadNamespace('shiny'))[getNamespaceExports('shiny')];
-  shinyNspace <- shinyNspace[unlist(lapply(shinyNspace, class)) == 'function'];
+  shinyNspace <- as.list(loadNamespace("shiny"))[getNamespaceExports("shiny")]
+  shinyNspace <- shinyNspace[unlist(lapply(shinyNspace, class)) == "function"]
 
-  allModals <- list(h2('Fill objects args.'),
-                    actionButton(inputId='filledObjArgsbtn', label='Accept'));
-  allModals <- append(allModals, lapply(canvasObjects$objList,
-                                        function(actObjs) {
-    lapply(actObjs, function(actObj) {
-      actArgs <- as.list(args(shinyNspace[[actObj$type]]));
-      actModal <- createUiObj(actObj, actArgs, input);
-      return(actModal);
-    })
-  }))
+  allModals <- list(
+    h2("Fill objects args."),
+    actionButton(inputId = "filledObjArgsbtn", label = "Accept")
+  )
+  allModals <- append(allModals, lapply(
+    canvasObjects$objList,
+    function(actObjs) {
+      lapply(actObjs, function(actObj) {
+        actArgs <- as.list(args(shinyNspace[[actObj$type]]))
+        actModal <- createUiObj(actObj, actArgs, input)
+        return(actModal)
+      })
+    }
+  ))
   showModal(modalDialog(
     allModals,
-    footer=NULL
-  ));
+    footer = NULL
+  ))
 }
 
 # Creates for each type of arg, the correct input we need for the modal.
 createUiObj <- function(actObj, actArgs, input) {
   # show only named args
-  actArgs <- actArgs[!names(actArgs) %in% c('...', '')];
-  modalUi <- list(h4(actObj$type));
-  actId <- paste0(actObj$id, '%'); # todo: remove '%' from possible names
+  actArgs <- actArgs[!names(actArgs) %in% c("...", "")]
+  modalUi <- list(h4(actObj$type))
+  actId <- paste0(actObj$id, "%") # todo: remove '%' from possible names
   modalUi <- append(modalUi, lapply(names(actArgs), function(actArg) {
     # actArg <- names(actArgs)[[1]];
-    actArgClass <- class(actArgs[[actArg]]);
-    actFullId <- paste0(actId, actArg);
-    oldVal <- actObj$args[[actArg]];
-    if (actArg %in% c('inputId', 'outputId')) {
-      actVal <- ifelse (!is.null(oldVal), oldVal, paste0('"', actObj$id, '"'));
-      res <- disabled(textInput(inputId=actFullId, label=actArg, value=actVal));
-    } else if (actArgClass == 'name') {
-      actVal <- ifelse (!is.null(oldVal), oldVal, paste0('"', actArgs[[actArg]], '"'));
-      res <- textInput(inputId=actFullId, label=actArg, value=actVal);
-    } else if (actArgClass == 'character') {
-      actVal <- ifelse (!is.null(oldVal), oldVal, paste0('"', actArgs[[actArg]], '"'));
-      res <- textInput(inputId=actFullId, label=actArg, value=actVal);
-    } else if (actArgClass == 'NULL') {
-      actVal <- ifelse (!is.null(oldVal), oldVal, 'NULL');
-      res <- textInput(inputId=actFullId, label=actArg, value=actVal);
+    actArgClass <- class(actArgs[[actArg]])
+    actFullId <- paste0(actId, actArg)
+    oldVal <- actObj$args[[actArg]]
+    if (actArg %in% c("inputId", "outputId")) {
+      actVal <- ifelse(!is.null(oldVal), oldVal, paste0('"', actObj$id, '"'))
+      res <- disabled(textInput(inputId = actFullId, label = actArg, value = actVal))
+    } else if (actArgClass == "name") {
+      actVal <- ifelse(!is.null(oldVal), oldVal, paste0('"', actArgs[[actArg]], '"'))
+      res <- textInput(inputId = actFullId, label = actArg, value = actVal)
+    } else if (actArgClass == "character") {
+      actVal <- ifelse(!is.null(oldVal), oldVal, paste0('"', actArgs[[actArg]], '"'))
+      res <- textInput(inputId = actFullId, label = actArg, value = actVal)
+    } else if (actArgClass == "NULL") {
+      actVal <- ifelse(!is.null(oldVal), oldVal, "NULL")
+      res <- textInput(inputId = actFullId, label = actArg, value = actVal)
     } else if (is.na(actArgs[[actArg]])) {
-      actVal <- ifelse (!is.null(oldVal), oldVal, 'NA');
-      res <- textInput(inputId=actFullId, label=actArg, value=actVal);
-    } else if (actArgClass == 'logical') {
-      actVal <- ifelse (!is.null(oldVal), oldVal, actArgs[[actArg]]);
-      res <- checkboxInput(inputId=actFullId, label=actArg, value=actVal);
-    } else if (actArgClass == 'numeric') {
-      actVal <- ifelse (!is.null(oldVal), oldVal, actArgs[[actArg]]);
-      res <- textInput(inputId=actFullId, label=actArg, value=actVal);
-    } else if (actArgClass == 'if') {
-      res <- c();
+      actVal <- ifelse(!is.null(oldVal), oldVal, "NA")
+      res <- textInput(inputId = actFullId, label = actArg, value = actVal)
+    } else if (actArgClass == "logical") {
+      actVal <- ifelse(!is.null(oldVal), oldVal, actArgs[[actArg]])
+      res <- checkboxInput(inputId = actFullId, label = actArg, value = actVal)
+    } else if (actArgClass == "numeric") {
+      actVal <- ifelse(!is.null(oldVal), oldVal, actArgs[[actArg]])
+      res <- textInput(inputId = actFullId, label = actArg, value = actVal)
+    } else if (actArgClass == "if") {
+      res <- c()
       # todo: handle this type
     } else {
-      warning(paste0('New shiny arg class found ', actArgClass));
-      res <- c();
+      warning(paste0("New shiny arg class found ", actArgClass))
+      res <- c()
     }
-    return(res);
+    return(res)
   }))
-  return(wellPanel(modalUi));
+  return(wellPanel(modalUi))
 }
 
 # For every object it saves the additional parameters defined by the user.
 # It updates each object (with new params) in canvasObjects$objList.
 # Called when filledObjArgsbtn (generated by getObjParams) is clicked.
 saveObjParams <- function(input, output, session, canvasObjects) {
-  inputList <- reactiveValuesToList(input);
-  objList <- canvasObjects$objList;
+  inputList <- reactiveValuesToList(input)
+  objList <- canvasObjects$objList
   newObjList <- lapply(objList, function(actObjs) {
     newObjList <- lapply(actObjs, function(actObj) {
-      actArgs <- inputList[grepl(paste0(actObj$id, '%'), names(inputList))];
-      names(actArgs) <- sub(paste0(actObj$id, '%'), '', names(actArgs));
-      actObj$args <- actArgs;
-      return(actObj);
+      actArgs <- inputList[grepl(paste0(actObj$id, "%"), names(inputList))]
+      names(actArgs) <- sub(paste0(actObj$id, "%"), "", names(actArgs))
+      actObj$args <- actArgs
+      return(actObj)
     })
-    return(newObjList);
+    return(newObjList)
   })
-  canvasObjects$objList <- newObjList;
+  canvasObjects$objList <- newObjList
 
-  return(canvasObjects);
+  return(canvasObjects)
 }
 
 # Finally, generates the code result!
 # Called when filledObjArgsbtn (generated by getObjParams) is clicked.
 generateResult <- function(input, output, session, canvasObjects, globalVars,
                            events) {
-  prev <- generatePrev();
-  global <- generateGlobal(input, output, session);
-  ui <- generateUi(input, output, session, canvasObjects);
-  server <- generateServer(input, output, session, globalVars, events);
-  post <- generatePost();
-  res <- paste0(prev, global, ui, server, post);
-  removeModal(); # todo: check if everything went well before removing
-  updateTextAreaInput(session, inputId='resultGenerated', value=res);
+  prev <- generatePrev()
+  global <- generateGlobal(input, output, session)
+  ui <- generateUi(input, output, session, canvasObjects)
+  server <- generateServer(input, output, session, globalVars, events)
+  post <- generatePost()
+  res <- paste0(prev, global, ui, server, post)
+  removeModal() # todo: check if everything went well before removing
+  updateTextAreaInput(session, inputId = "resultGenerated", value = res)
 }
 
 ###### global
 
 # Generates what should be global.R
 generateGlobal <- function(input, output, session, canvasObjects) {
-  res <- input$globalInput;
+  res <- input$globalInput
 
-  if (res != '')
-    res <- paste0(res, '\n\n');
+  if (res != "") {
+    res <- paste0(res, "\n\n")
+  }
 
-  return(res);
+  return(res)
 }
 
 ###### ui
@@ -120,36 +125,41 @@ generateGlobal <- function(input, output, session, canvasObjects) {
 #   absolutePanel(wellPanel('someShinyObject(...)'), top='y', height='height', left='x', width='width')
 # )
 generateUi <- function(input, output, session, canvasObjects) {
-  res <- 'ui <- fluidPage(\n';
+  res <- "ui <- fluidPage(\n"
   panels <- lapply(canvasObjects$objList, function(actObjs) {
     panels <- lapply(actObjs, function(actObj) {
-      actArgs <- actObj$args;
-      paste0('\tabsolutePanel(wellPanel(',
-             params2String(actObj, actArgs),
-             '), top=', actObj$y,
-             ', height=', actObj$height,
-             ', left=', actObj$x,
-             ', width=', actObj$width,
-             ')')
+      actArgs <- actObj$args
+      paste0(
+        "\tabsolutePanel(wellPanel(",
+        params2String(actObj, actArgs),
+        "), top=", actObj$y,
+        ", height=", actObj$height,
+        ", left=", actObj$x,
+        ", width=", actObj$width,
+        ")"
+      )
     })
-    panels <- paste(panels, collapse=',\n');
-    return(panels);
+    panels <- paste(panels, collapse = ",\n")
+    return(panels)
   })
-  panels <- paste(panels, collapse=',\n');
-  res <- paste0(res, panels);
-  res <- paste0(res, "\n)\n\n");
-  return(res);
+  panels <- paste(panels, collapse = ",\n")
+  res <- paste0(res, panels)
+  res <- paste0(res, "\n)\n\n")
+  return(res)
 }
 
 # For each param creates 'paramName=param'
 params2String <- function(actObj, actArgs) {
   resArgs <- paste(names(actArgs),
-                   actArgs,
-                   sep='=', collapse=', ');
-  res <- paste0(actObj$type, '(',
-                resArgs,
-                ')');
-  return(res);
+    actArgs,
+    sep = "=", collapse = ", "
+  )
+  res <- paste0(
+    actObj$type, "(",
+    resArgs,
+    ")"
+  )
+  return(res)
 }
 
 ###### server
@@ -163,27 +173,27 @@ params2String <- function(actObj, actArgs) {
 #
 # }
 generateServer <- function(input, output, session, globalVars, events) {
-  globalVarsStr <- generateGlobalVars(globalVars);
-  globalVarsStr <- ifelse(globalVarsStr == '', '', paste0(globalVarsStr, '\n'));
-  globalVarsStr <- gsub('\n', '\n\t', globalVarsStr);
+  globalVarsStr <- generateGlobalVars(globalVars)
+  globalVarsStr <- ifelse(globalVarsStr == "", "", paste0(globalVarsStr, "\n"))
+  globalVarsStr <- gsub("\n", "\n\t", globalVarsStr)
 
-  eventsStr <- generateEvents(events);
-  eventsStr <- gsub('\n', '\n\t', eventsStr);
+  eventsStr <- generateEvents(events)
+  eventsStr <- gsub("\n", "\n\t", eventsStr)
 
   paste0(
-    'server <- function(input, output) {',
+    "server <- function(input, output) {",
     globalVarsStr,
     eventsStr,
-    '\n}'
-  );
+    "\n}"
+  )
 }
 
 # Generate code of global vars.
 # globalVar1 <- 'value';
 generateGlobalVars <- function(globalVars) {
   paste(lapply(names(globalVars), function(actGlob) {
-    paste0('\n', actGlob, ' <- ', globalVars[[actGlob]], ';');
-  }), collapse='');
+    paste0("\n", actGlob, " <- ", globalVars[[actGlob]], ";")
+  }), collapse = "")
 }
 
 # Generate code of events.
@@ -196,7 +206,7 @@ generateGlobalVars <- function(globalVars) {
 generateEvents <- function(events) {
   paste(lapply(events, function(actEvt) {
     paste0(
-      '\n',
+      "\n",
       genNameComment(actEvt$name),
       genObsEvent(
         actEvt$when,
@@ -205,45 +215,47 @@ generateEvents <- function(events) {
           actEvt$render,
           paste0(
             genWith(actEvt$with),
-            '\n',
-            actEvt$what)
+            "\n",
+            actEvt$what
+          )
         )
       )
     )
-  }), collapse='\n')
+  }), collapse = "\n")
 }
 
 # Comment the name of the event
 genNameComment <- function(string) {
-  paste0('# ', string);
+  paste0("# ", string)
 }
 
 # Generates the observer, with the code inside.
 genObsEvent <- function(obj, toDo) {
-  evtStart <- '\nobserveEvent(input$';
-  evtEnd <- '\n})';
+  evtStart <- "\nobserveEvent(input$"
+  evtEnd <- "\n})"
   paste0(
     evtStart,
-    obj, ', {',
-    gsub('\n', '\n\t', toDo),
-    evtEnd);
+    obj, ", {",
+    gsub("\n", "\n\t", toDo),
+    evtEnd
+  )
 }
 
 # If has to be rendered then it adds this code.
 genOutp <- function(output, renderFn, toDo) {
-  res <- toDo;
-  if (output != 'NA') {
+  res <- toDo
+  if (output != "NA") {
     res <- paste0(
-      '\noutput$',
+      "\noutput$",
       output,
-      ' <- ',
+      " <- ",
       renderFn, # function to render
-      '({',
-      gsub('\n', '\n\t', toDo),
-      '\n})'
+      "({",
+      gsub("\n", "\n\t", toDo),
+      "\n})"
     )
   }
-  return(res);
+  return(res)
 }
 
 # For each input var that will be used it creates something like:
@@ -252,21 +264,21 @@ genWith <- function(withs) {
   paste(lapply(withs, function(actWith) {
     # actWith <- withs[[1]];
     paste0(
-      '\n',
+      "\n",
       actWith,
-      ' <- input$',
+      " <- input$",
       actWith,
-      ';'
+      ";"
     )
-  }), collapse='');
+  }), collapse = "")
 }
 
 # Generates shiny app.R starting code
 generatePrev <- function() {
-  'library(shiny);\n\n';
+  "library(shiny);\n\n"
 }
 
 # Generates shiny app.R ending code
 generatePost <- function() {
-  '\n\nshinyApp(ui=ui, server=server);\n';
+  "\n\nshinyApp(ui=ui, server=server);\n"
 }

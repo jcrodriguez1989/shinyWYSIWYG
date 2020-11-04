@@ -15,7 +15,7 @@ shinyWYSIWYG package shiny-based graphical user interface (GUI)
 \examples{
 ## Start the GUI
 \dontrun{
-shinyWYSIWYG();
+shinyWYSIWYG()
 }
 
 }
