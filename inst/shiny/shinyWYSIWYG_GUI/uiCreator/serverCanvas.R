@@ -23,7 +23,7 @@ drawCanvas <- function(input, output, session, canvasObjects) {
     # theme(panel.grid.major=element_blank(), panel.grid.minor=element_blank()) +
     scale_y_reverse() +
     scale_x_continuous() +
-    coord_fixed(
+    coord_trans(
       xlim = c(-0.1, maxWidth + .1), ylim = c(-0.1, maxHeight + .1),
       expand = FALSE
     ) +
